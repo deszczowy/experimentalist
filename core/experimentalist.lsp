@@ -44,6 +44,7 @@
 ; All imports should be pass relative to project root directory.
 
 (x-import "core/debug.lsp")
+(x-import "core/array.lsp")
 (x-import "core/math.lsp")
 (x-import "core/string.lsp")
 (x-import "core/sound.lsp")
