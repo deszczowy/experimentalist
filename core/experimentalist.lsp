@@ -21,6 +21,12 @@
 (init-global *x-max-length* 15876000000)
 
 
+; This variable represents maximum memory usage for computation. 
+; Unit is byte.
+
+(init-global *x-max-memory* 2147483648)
+
+
 ; This variable indicates whether a debug mode is on or off.
 ; Debug mode is on by default.
 
@@ -43,3 +49,9 @@
 (x-import "core/sound.lsp")
 (x-import "core/file.lsp")
 (x-import "core/output.lsp")
+
+
+; Extend available RAM. Default Nyquist value is around 1GB. This can 
+; be to little for recordings longer then 20 minutes, but 2GB should work. 
+
+(snd-set-max-audio-mem *x-max-memory*)
