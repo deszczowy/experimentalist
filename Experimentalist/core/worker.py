@@ -24,10 +24,12 @@ class Worker:
     def normalize(self):
         self.audio = Limiter(threshold_db=-5.0).process(self.audio, self.sample_rate)
 
-    def apply(self, runId, outputPath):
+    def apply(self, runId, outputPath, play=False):
         self._nameOutputFile(outputPath, runId)
         self.process()
         self._save()
+        if play == True:
+            self._play()
 
     def _read(self):
         self.audio, self.sample_rate = sf.read(self.path)
@@ -45,3 +47,7 @@ class Worker:
             channels = len(self.audio.shape)
         ) as f:
             f.write(self.audio)
+
+    def _play(self):
+        from playsound import playsound
+        playsound(self.output)
