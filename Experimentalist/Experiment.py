@@ -1,4 +1,4 @@
-from Experimentalist.Workers import Looper
+from Experimentalist.Workers import Looper, Drone
 
 class Container:
     
@@ -15,3 +15,7 @@ class Container:
     def LoopLong(file, id, outputPath):
         print(f"{Container.Header()} LoopLong for {file}")
         Looper(file, 20).apply(id, outputPath)
+
+    @staticmethod
+    def LoopDrone(file, id, outputPath):
+        Drone(file, maxDuration=20, factor=0.8).apply(id, outputPath)

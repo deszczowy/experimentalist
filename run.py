@@ -32,6 +32,7 @@ def reverbed(file, id, outputPath):
 # be invoked on every file from sources path.
 p.connect(Container.LoopClean)
 p.connect(Container.LoopLong)
+p.connect(Container.LoopDrone)
 p.connect(reverbed)
 
 # Sit back and wait for the results

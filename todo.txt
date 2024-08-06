@@ -1,7 +1,4 @@
-Moving functionalities from LISP version
-- x-time-stretch (sound factor)
-- x-stretch-looper (sound limit factor)
-
 Usability
 - logging actions and workers
 - workers tag used in filenames instead of incremented numbers
+- process logging file (current/all) worker (current/all)
