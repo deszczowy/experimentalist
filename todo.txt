@@ -2,3 +2,4 @@ Usability
 - logging actions and workers
 - workers tag used in filenames instead of incremented numbers
 - process logging file (current/all) worker (current/all)
+- logs by default tagged by by class names
