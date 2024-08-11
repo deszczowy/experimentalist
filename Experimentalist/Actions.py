@@ -5,3 +5,4 @@ from Experimentalist.action.stretch import Stretch  # noqa
 from Experimentalist.action.dynamicpan import DynamicPan  # noqa
 from Experimentalist.action.volumechange import VolumeChange  # noqa
 from Experimentalist.action.copy import Copy  # noqa
+from Experimentalist.action.revert import Revert  # noqa
