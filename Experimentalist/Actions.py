@@ -7,3 +7,4 @@ from Experimentalist.action.volumechange import VolumeChange  # noqa
 from Experimentalist.action.copy import Copy  # noqa
 from Experimentalist.action.revert import Revert  # noqa
 from Experimentalist.action.mix import Mix  # noqa
+from Experimentalist.action.echo import Echo  # noqa
