@@ -1,0 +1,13 @@
+from Experimentalist.Core import Processor, Arguments
+from Experimentalist.Workers import @@@CNAME@@@
+
+a = Arguments()
+p = Processor(a.sources())
+
+## Method which invokes worker
+def test(file, id, outputPath):
+    @@@CNAME@@@(file).apply(id, outputPath, True) # result will be played, for testing.
+##
+
+p.connect(test)
+p.perform()

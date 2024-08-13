@@ -1,0 +1,54 @@
+#! /usr/bin/python3
+import argparse
+
+def getTemplate(name):
+    template = os.path.join("/Experimentalist/core/template", f"{name}.tmpl")
+    print(template)
+
+def getNames(name):
+    baseName = name.replace(" ", "")
+    baseName = baseName.replace("_", "")
+
+    fileName = f"{baseName.lower()}.py"
+    return name, baseName, fileName
+ 
+def createAction(name):
+    print(getNames(name))
+
+parser = argparse.ArgumentParser(
+    prog='exp',
+    description="Experimentalist Run Script, which will run user \
+    defined chains of actions over WAV files from provided \
+    source path.",
+    epilog=''
+)
+
+parser.add_argument(
+    "-a", "--action",
+    action="store",
+    dest='actionName',
+    default=""
+)
+
+parser.add_argument(
+    "-w", "--worker",
+    action="store",
+    dest='workerName',
+    default=""
+)
+
+parser.add_argument(
+    "-t", "--test",
+    action="store_true",
+    dest='addTesting',
+    default=False
+)
+
+arguments = parser.parse_args()
+if arguments.actionName != "":
+    print("Add action")
+    createAction(arguments.actionName)
+if arguments.workerName != "":
+    print("Add worker")
+if arguments.addTesting is True:
+    print("Add testing module")
