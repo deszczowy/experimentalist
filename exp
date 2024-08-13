@@ -1,19 +1,59 @@
 #! /usr/bin/python3
 import argparse
+import os
+import re
+
+template_location = "Experimentalist/core/template/"
 
 def getTemplate(name):
-    template = os.path.join("/Experimentalist/core/template", f"{name}.tmpl")
-    print(template)
+    template = os.path.join(template_location, f"{name}.tmpl")
+    data = ""
+    with open(template, 'r') as file:
+        data = file.read()
+    return data
 
 def getNames(name):
-    baseName = name.replace(" ", "")
-    baseName = baseName.replace("_", "")
+    baseName = name.lower()
+    baseName = re.sub(r"(_|-)+", " ", name).title().replace(" ", "").replace("*","")
+    #return ''.join([s[0].lower(), s[1:]])
 
-    fileName = f"{baseName.lower()}.py"
-    return name, baseName, fileName
+    fileName = baseName.lower()
+    fileNameExt = f"{fileName}.py"
+    return name, baseName, fileName, fileNameExt
+
+def saveNewFile(fileName, content):
+    with open(fileName, 'w') as file:
+        file.write(content)
  
 def createAction(name):
-    print(getNames(name))
+    name, className, fileName, fileNameExt = getNames(name)
+    fpath = os.path.join("Experimentalist/action", fileNameExt)
+    template_a = getTemplate("action")
+    template_m = getTemplate("module")
+
+    template_a = template_a.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", name)
+    template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "action").replace("@@@MODULE@@@", fileName)
+
+    saveNewFile(fpath, template_a)
+    appendToFile(template_m, "Action")
+
+def createWorker(name):
+    name, className, fileName, fileNameExt = getNames(name)
+    fpath = os.path.join("Experimentalist/worker", fileNameExt)
+    template_w = getTemplate("worker")
+    template_m = getTemplate("module")
+
+    template_w = template_w.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", name)
+    template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "worker").replace("@@@MODULE@@@", fileName)
+
+    saveNewFile(fpath, template_w)
+    appendToFile(template_m, "Worker")
+
+def appendToFile(line, fileType):
+    fileName = f"Experimentalist/{fileType}s.py"
+    with open(fileName, "a") as myfile:
+        myfile.write(line + "\n")
+
 
 parser = argparse.ArgumentParser(
     prog='exp',
@@ -50,5 +90,6 @@ if arguments.actionName != "":
     createAction(arguments.actionName)
 if arguments.workerName != "":
     print("Add worker")
+    createWorker(arguments.workerName)
 if arguments.addTesting is True:
     print("Add testing module")
