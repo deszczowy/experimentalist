@@ -3,93 +3,80 @@ import argparse
 import os
 import re
 
-template_location = "Experimentalist/core/template/"
+class Exp:
 
-def getTemplate(name):
-    template = os.path.join(template_location, f"{name}.tmpl")
-    data = ""
-    with open(template, 'r') as file:
-        data = file.read()
-    return data
+    def __init__(self):
+        self.template_location = "Experimentalist/core/template/"
+        self._setupParams()
+        self._do()
 
-def getNames(name):
-    baseName = name.lower()
-    baseName = re.sub(r"(_|-)+", " ", name).title().replace(" ", "").replace("*","")
-    #return ''.join([s[0].lower(), s[1:]])
+    def _header(self):
+        print("Experimentalist CLI")
 
-    fileName = baseName.lower()
-    fileNameExt = f"{fileName}.py"
-    return name, baseName, fileName, fileNameExt
+    def _footer(self):
+        print("Done. Bye!")
 
-def saveNewFile(fileName, content):
-    with open(fileName, 'w') as file:
-        file.write(content)
+    def _getTemplate(self, name):
+        template = os.path.join(self.template_location, f"{name}.tmpl")
+        data = ""
+        with open(template, 'r') as file:
+            data = file.read()
+        return data
+
+    def _getNames(self, name):
+        baseName = name.lower()
+        baseName = re.sub(r"(_|-)+", " ", name).title().replace(" ", "").replace("*","")
+        fileName = baseName.lower()
+        fileNameExt = f"{fileName}.py"
+        return name, baseName, fileName, fileNameExt
+
+    def _saveNewFile(self, fileName, content):
+        with open(fileName, 'w') as file:
+            file.write(content)
  
-def createAction(name):
-    name, className, fileName, fileNameExt = getNames(name)
-    fpath = os.path.join("Experimentalist/action", fileNameExt)
-    template_a = getTemplate("action")
-    template_m = getTemplate("module")
+    def createClass(self, name: str, classType: str):
+        types = {"action", "worker"}
+        classType = classType.lower()
+        if classType in types:
+            print(f"Creating {classType}: {name}")
+            mainName, className, fileName, fileNameExt = self._getNames(name)
+            fpath = os.path.join("Experimentalist", classType, fileNameExt)
+            template_c = self._getTemplate(classType)
+            template_m = self._getTemplate("module")
 
-    template_a = template_a.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", name)
-    template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "action").replace("@@@MODULE@@@", fileName)
+            template_c = template_c.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", mainName)
+            template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "action").replace("@@@MODULE@@@", fileName)
 
-    saveNewFile(fpath, template_a)
-    appendToFile(template_m, "Action")
+            self._saveNewFile(fpath, template_c)
+            self._appendToFile(template_m, classType.title())
+        else:
+            print("Wrong type")
 
-def createWorker(name):
-    name, className, fileName, fileNameExt = getNames(name)
-    fpath = os.path.join("Experimentalist/worker", fileNameExt)
-    template_w = getTemplate("worker")
-    template_m = getTemplate("module")
+    def _appendToFile(self, line, fileType):
+        fileName = f"Experimentalist/{fileType}s.py"
+        with open(fileName, "a") as myfile:
+            myfile.write(line + "\n")
 
-    template_w = template_w.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", name)
-    template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "worker").replace("@@@MODULE@@@", fileName)
+    def _setupParams(self):
+        parser = argparse.ArgumentParser(
+            prog='exp',
+            description="Experimentalist CLI. Create class templates with ease.",
+            epilog=''
+        )
 
-    saveNewFile(fpath, template_w)
-    appendToFile(template_m, "Worker")
+        parser.add_argument("-a", "--action", action="store", dest='actionName', default="")
+        parser.add_argument("-w", "--worker", action="store", dest='workerName', default="")
+        parser.add_argument("-t", "--test",   action="store_true", dest='addTesting', default=False)
+        self.arguments = parser.parse_args()
 
-def appendToFile(line, fileType):
-    fileName = f"Experimentalist/{fileType}s.py"
-    with open(fileName, "a") as myfile:
-        myfile.write(line + "\n")
+    def _do(self):
+        self._header()
+        if self.arguments.actionName != "":
+            self.createClass(self.arguments.actionName, "action")
+        if self.arguments.workerName != "":
+            self.createClass(self.arguments.workerName, "worker")
+        if self.arguments.addTesting is True:
+            print("Add testing module")
+        self._footer()
 
-
-parser = argparse.ArgumentParser(
-    prog='exp',
-    description="Experimentalist Run Script, which will run user \
-    defined chains of actions over WAV files from provided \
-    source path.",
-    epilog=''
-)
-
-parser.add_argument(
-    "-a", "--action",
-    action="store",
-    dest='actionName',
-    default=""
-)
-
-parser.add_argument(
-    "-w", "--worker",
-    action="store",
-    dest='workerName',
-    default=""
-)
-
-parser.add_argument(
-    "-t", "--test",
-    action="store_true",
-    dest='addTesting',
-    default=False
-)
-
-arguments = parser.parse_args()
-if arguments.actionName != "":
-    print("Add action")
-    createAction(arguments.actionName)
-if arguments.workerName != "":
-    print("Add worker")
-    createWorker(arguments.workerName)
-if arguments.addTesting is True:
-    print("Add testing module")
+Exp()
