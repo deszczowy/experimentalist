@@ -8,3 +8,6 @@ from Experimentalist.action.copy import Copy  # noqa
 from Experimentalist.action.revert import Revert  # noqa
 from Experimentalist.action.mix import Mix  # noqa
 from Experimentalist.action.echo import Echo  # noqa
+from Experimentalist.action.highpass import HighPass  # noqa
+from Experimentalist.action.lowpass import LowPass  # noqa
+from Experimentalist.action.reverb import Reverb  # noqa
