@@ -45,7 +45,7 @@ class Exp:
             template_m = self._getTemplate("module")
 
             template_c = template_c.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", mainName)
-            template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", "action").replace("@@@MODULE@@@", fileName)
+            template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", classType).replace("@@@MODULE@@@", fileName)
 
             self._saveNewFile(fpath, template_c)
             self._appendToFile(template_m, classType.title())

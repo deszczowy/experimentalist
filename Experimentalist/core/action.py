@@ -8,6 +8,6 @@ class Action:
         self.length = 0
         self.log = Log(withName)
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> None:
+    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
         self.length = len(audio[:, 0])
         return audio
