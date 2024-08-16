@@ -16,7 +16,7 @@ class Mix(Action):
         self.setOffset(offset_seconds)
         self.clip = clip
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> None:
+    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
         super().process(audio, sample_rate)
         offset = int(self.offset * sample_rate)
 
@@ -35,6 +35,8 @@ class Mix(Action):
 
         for i in range(0, self.length):
             self.base[i + offset] = self.base[i + offset] + 0.5 * audio[i]
+
+        return self.base
 
     def result(self) -> np.ndarray:
         return self.base

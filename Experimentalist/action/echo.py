@@ -16,7 +16,7 @@ class Echo(Action):
         self.decay = np.clip(decay_rate, 0.1, 0.99)
         self.clip = clip_to_original_length
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> None:
+    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
         super().process(audio, sample_rate)
 
         copy = Copy().process(audio, sample_rate)
