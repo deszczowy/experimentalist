@@ -4,11 +4,12 @@ import numpy as np
 
 class DynamicPan(Action):
 
-    def __init__(self, phase: float = 1.0) -> None:
+    def __init__(self, phase: float = 1.0, starting_left: bool = True) -> None:
         super().__init__("Dynamic Pan")
         self.phase = np.clip(phase, 0.1, 10.0)
+        self.first_left = starting_left
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> None:
+    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
         super().process(audio, sample_rate)
         frames = int(self.phase * sample_rate)
 
@@ -17,8 +18,12 @@ class DynamicPan(Action):
         right = self._two(points)
 
         channels = audio.T
-        channels[0] = self._apply(channels[0], left)
-        channels[1] = self._apply(channels[1], right)
+        if self.first_left is True:
+            channels[0] = self._apply(channels[0], left)
+            channels[1] = self._apply(channels[1], right)
+        else:
+            channels[0] = self._apply(channels[0], right)
+            channels[1] = self._apply(channels[1], left)
         return channels.T
 
     def _one(self, x: float) -> float:
