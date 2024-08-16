@@ -1,4 +1,4 @@
-from Experimentalist.Workers import Looper, Drone
+from Experimentalist.Workers import Looper, Droner
 
 
 class Container:
@@ -19,4 +19,4 @@ class Container:
 
     @staticmethod
     def LoopDrone(file: str, id: int, outputPath: str) -> None:
-        Drone(file, maxDuration=20, factor=0.8).apply(id, outputPath)
+        Droner(file, maxDuration=20, factor=0.8).apply(id, outputPath)
