@@ -6,7 +6,7 @@ import re
 class Exp:
 
     def __init__(self):
-        self.template_location = "Experimentalist/core/template/"
+        self.template_location = "Experimentalist/Core/template/"
         self._setupParams()
         self._do()
 
@@ -35,25 +35,26 @@ class Exp:
             file.write(content)
  
     def createClass(self, name: str, classType: str):
-        types = {"action", "worker"}
-        classType = classType.lower()
+        types = {"Action", "Worker"}
+        classType = classType.title()
         if classType in types:
             print(f"Creating {classType}: {name}")
             mainName, className, fileName, fileNameExt = self._getNames(name)
-            fpath = os.path.join("Experimentalist", classType, fileNameExt)
+            place = f"{classType}s"
+            fpath = os.path.join("Experimentalist", place, fileNameExt)
             template_c = self._getTemplate(classType)
-            template_m = self._getTemplate("module")
+            template_m = self._getTemplate("Module")
 
             template_c = template_c.replace("@@@CNAME@@@", className).replace("@@@NAME@@@", mainName)
-            template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", classType).replace("@@@MODULE@@@", fileName)
+            template_m = template_m.replace("@@@CNAME@@@", className).replace("@@@PLACE@@@", place).replace("@@@MODULE@@@", fileName)
 
             self._saveNewFile(fpath, template_c)
-            self._appendToFile(template_m, classType.title())
+            self._appendToFile(template_m, place)
         else:
             print("Wrong type")
 
-    def _appendToFile(self, line, fileType):
-        fileName = f"Experimentalist/{fileType}s.py"
+    def _appendToFile(self, line, place):
+        fileName = f"Experimentalist/{place}/__init__.py"
         with open(fileName, "a") as myfile:
             myfile.write(line + "\n")
 
