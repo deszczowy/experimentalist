@@ -1,0 +1,13 @@
+from Experimentalist.Actions.fade import Fade  # noqa
+from Experimentalist.Actions.loop import Loop  # noqa
+from Experimentalist.Actions.pan import Pan  # noqa
+from Experimentalist.Actions.stretch import Stretch  # noqa
+from Experimentalist.Actions.dynamicpan import DynamicPan  # noqa
+from Experimentalist.Actions.volumechange import VolumeChange  # noqa
+from Experimentalist.Actions.copy import Copy  # noqa
+from Experimentalist.Actions.revert import Revert  # noqa
+from Experimentalist.Actions.mix import Mix  # noqa
+from Experimentalist.Actions.echo import Echo  # noqa
+from Experimentalist.Actions.highpass import HighPass  # noqa
+from Experimentalist.Actions.lowpass import LowPass  # noqa
+from Experimentalist.Actions.reverb import Reverb  # noqa
