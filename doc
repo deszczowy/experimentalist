@@ -1,0 +1,4 @@
+#! /bin/bash
+rm --recursive --force ./Documentation/*
+pdoc3 --html --output-dir ./Documentation ./Experimentalist
+cp -a ./Documentation/Experimentalist/. ./Documentation
