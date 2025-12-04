@@ -1,11 +1,11 @@
 from Experimentalist.Core import Worker
-from Experimentalist.Actions import HighPass, LowPass, Copy, DynamicPan, Mix, Reverb
+from Experimentalist.Actions import HighPass, LowPass, Copy, DynamicPan, Mix, Reverb, Fade, Loop
 
 
 class Spacer(Worker):
 
     def __init__(self, filePath: str) -> None:
-        super().__init__(filePath, "Test")
+        super().__init__(filePath, "Spacer")
 
     def process(self) -> None:
         self.audio = Reverb(room_size=1.0, dry_wet=1.0).process(self.audio, self.sample_rate)
@@ -23,3 +23,24 @@ class Spacer(Worker):
 
         self.audio = mixer.result()
         super().process()
+
+class SpacerLoop(Spacer):
+
+    def __init__(self, filePath: str) -> None:
+        super().__init__(filePath)
+
+    def process(self) -> None:
+        super().process()
+
+        maxDuration = 10
+        if self.length > maxDuration:
+            while True:
+                self.audio = Fade().process(self.audio, self.sample_rate)
+                self.audio = Loop().process(self.audio, self.sample_rate)
+
+                self.normalize()
+                self.computeLength()
+
+                if self.length < maxDuration:
+                    break
+

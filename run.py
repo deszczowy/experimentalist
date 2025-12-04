@@ -33,6 +33,8 @@ def reverbed(file, id, outputPath):
 p.connect(Container.LoopClean)
 p.connect(Container.LoopLong)
 p.connect(Container.LoopDrone)
+p.connect(Container.SpaceFull)
+p.connect(Container.SpaceLoop)
 p.connect(reverbed)
 
 # Sit back and wait for the results
