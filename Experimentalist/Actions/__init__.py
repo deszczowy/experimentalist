@@ -11,3 +11,4 @@ from Experimentalist.Actions.echo import Echo  # noqa
 from Experimentalist.Actions.highpass import HighPass  # noqa
 from Experimentalist.Actions.lowpass import LowPass  # noqa
 from Experimentalist.Actions.reverb import Reverb  # noqa
+from Experimentalist.Actions.flashback import Flashback  # noqa
