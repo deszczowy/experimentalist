@@ -1,5 +1,4 @@
 from Experimentalist.Core import Audio, Log
-from pedalboard import Limiter
 import os
 import soundfile as sf
 
@@ -12,14 +11,8 @@ class Worker:
         self.log.write(f"Data prepared from {filePath}")
 
     def process(self) -> None:
-        self.normalize()
+        self.audio.normalize()
         self.audio.update_parameters()
-
-    def normalize(self) -> None:
-        self.audio.frames = Limiter(threshold_db=-5.0).process(
-            self.audio.frames,
-            self.audio.sample_rate
-        )
 
     def apply(self, runId: int, outputPath: str, play: bool = False) -> None:
         self._nameOutputFile(outputPath, runId)
