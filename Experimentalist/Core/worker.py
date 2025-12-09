@@ -1,4 +1,4 @@
-from Experimentalist.Core import Log
+from Experimentalist.Core import Audio, Log
 from pedalboard import Limiter
 import os
 import soundfile as sf
@@ -8,22 +8,17 @@ class Worker:
 
     def __init__(self, filePath: str, workerName: str) -> None:
         self.log = Log(workerName)
-        self.path = filePath
-        self._read()
-        self.computeLength()
+        self.audio = Audio(filePath)
         self.log.write(f"Data prepared from {filePath}")
 
     def process(self) -> None:
         self.normalize()
-        self.computeLength()
-
-    def computeLength(self) -> None:
-        self.length = len(self.audio) / self.sample_rate  # length in seconds
+        self.audio.update_parameters()
 
     def normalize(self) -> None:
-        self.audio = Limiter(threshold_db=-5.0).process(
-            self.audio,
-            self.sample_rate
+        self.audio.frames = Limiter(threshold_db=-5.0).process(
+            self.audio.frames,
+            self.audio.sample_rate
         )
 
     def apply(self, runId: int, outputPath: str, play: bool = False) -> None:
@@ -33,11 +28,8 @@ class Worker:
         if play is True:
             self._play()
 
-    def _read(self) -> None:
-        self.audio, self.sample_rate = sf.read(self.path)
-
     def _nameOutputFile(self, outputPath: str, runId: int) -> None:
-        name, extension = os.path.splitext(os.path.basename(self.path))
+        name, extension = os.path.splitext(os.path.basename(self.audio.path))
         self.output = os.path.join(outputPath, "")
         self.output = f"{self.output}{name}-{runId}{extension}"
 
@@ -45,10 +37,10 @@ class Worker:
         with sf.SoundFile(
             self.output,
             'w',
-            samplerate=self.sample_rate,
-            channels=len(self.audio.shape)
+            samplerate=self.audio.sample_rate,
+            channels=self.audio.channels
         ) as f:
-            f.write(self.audio)
+            f.write(self.audio.frames)
 
     def _play(self) -> None:
         from playsound import playsound
