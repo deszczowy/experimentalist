@@ -50,6 +50,10 @@ class Audio:
             self.sample_rate
         )
 
+    def resize(self, new_size: int) -> None:
+        self.frames.resize((new_size, self.channels), refcheck=False)
+        self.count = new_size
+
     def copy(self) -> 'Audio':
         """
         Makes a hard copy of self.
@@ -82,6 +86,6 @@ class Audio:
             self.channels = self.frames.shape[1]
 
     def _compute_length(self) -> None:
-        self.count = len(self.frames[:, 0])
+        self.count = len(self.frames)
 
 
