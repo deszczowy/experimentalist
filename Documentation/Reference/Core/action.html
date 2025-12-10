@@ -56,19 +56,28 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Action:
+    &#34;&#34;&#34;
+    Base class for actions invoked on sound.
 
+    Parameters
+    ----------
+    withName : str
+        This is an action name, which will appear in log file and prints.
+    &#34;&#34;&#34;
     def __init__(self, withName: str) -&gt; None:
-        self.length = 0
         self.log = Log(withName)
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        self.length = len(audio[:, 0])
-        return audio</code></pre>
+    def process(self, audio: Audio) -&gt; None:
+        pass</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Base class for actions invoked on sound.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
+<dd>This is an action name, which will appear in log file and prints.</dd>
+</dl></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="Experimentalist.Actions.copy.Copy" href="../Actions/copy.html#Experimentalist.Actions.copy.Copy">Copy</a></li>
 <li><a title="Experimentalist.Actions.dynamicpan.DynamicPan" href="../Actions/dynamicpan.html#Experimentalist.Actions.dynamicpan.DynamicPan">DynamicPan</a></li>
 <li><a title="Experimentalist.Actions.echo.Echo" href="../Actions/echo.html#Experimentalist.Actions.echo.Echo">Echo</a></li>
 <li><a title="Experimentalist.Actions.fade.Fade" href="../Actions/fade.html#Experimentalist.Actions.fade.Fade">Fade</a></li>
@@ -86,16 +95,15 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Core.action.Action.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    self.length = len(audio[:, 0])
-    return audio</code></pre>
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    pass</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

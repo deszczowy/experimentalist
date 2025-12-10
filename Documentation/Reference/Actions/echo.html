@@ -68,23 +68,29 @@ el.replaceWith(d);
         self.decay = np.clip(decay_rate, 0.1, 0.99)
         self.clip = clip_to_original_length
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        super().process(audio, sample_rate)
+    def process(self, audio: Audio) -&gt; None:
+        super().process(audio)
 
-        copy = Copy().process(audio, sample_rate)
+        copy = audio.copy()
         mixer = Mix(audio, self.interval, self.clip)
         vol = VolumeChange(self.decay)
         iteration = 1
 
         while iteration &lt; 5:
-            copy = vol.process(copy, sample_rate)
-            mixer.process(copy, sample_rate)
+            copy = vol.process(copy)
+            mixer.process(copy)
             iteration += 1
             mixer.setOffset(iteration * self.interval)
 
-        return mixer.result()</code></pre>
+        audio.frames = mixer.result().frames
+        audio.update_parameters()</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Base class for actions invoked on sound.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
+<dd>This is an action name, which will appear in log file and prints.</dd>
+</dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="Experimentalist.Core.action.Action" href="../Core/action.html#Experimentalist.Core.action.Action">Action</a></li>
@@ -92,28 +98,29 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.echo.Echo.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    super().process(audio, sample_rate)
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    super().process(audio)
 
-    copy = Copy().process(audio, sample_rate)
+    copy = audio.copy()
     mixer = Mix(audio, self.interval, self.clip)
     vol = VolumeChange(self.decay)
     iteration = 1
 
     while iteration &lt; 5:
-        copy = vol.process(copy, sample_rate)
-        mixer.process(copy, sample_rate)
+        copy = vol.process(copy)
+        mixer.process(copy)
         iteration += 1
         mixer.setOffset(iteration * self.interval)
 
-    return mixer.result()</code></pre>
+    audio.frames = mixer.result().frames
+    audio.update_parameters()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

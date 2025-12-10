@@ -57,16 +57,38 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">class VolumeChange(Action):
 
+    &#34;&#34;&#34;
+    Changing sound volume by a given factor.
+    &#34;&#34;&#34;
+
+
     def __init__(self, factor: float = 1.0) -&gt; None:
+        &#34;&#34;&#34;
+        Parameters
+        ----------
+
+        factor : float
+            Number from [0.2 .. 2.0] range. Default is 1.0, which indicates no volume change.
+        &#34;&#34;&#34;
         super().__init__(&#34;Volume&#34;)
         self.factor = np.clip(factor, 0.0, 2.0)
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        audio[:, 0] *= self.factor
-        audio[:, 1] *= self.factor
-        return audio</code></pre>
+    def process(self, audio: Audio) -&gt; None:
+        print(audio)
+        print(audio.channels)
+        print(audio.frames)
+        if audio.channels == 1:
+            audio.frames[:] *= self.factor
+        else:
+            audio.frames[:, 0] *= self.factor
+            audio.frames[:, 1] *= self.factor</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Changing sound volume by a given factor.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>factor</code></strong> :&ensp;<code>float</code></dt>
+<dd>Number from [0.2 .. 2.0] range. Default is 1.0, which indicates no volume change.</dd>
+</dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="Experimentalist.Core.action.Action" href="../Core/action.html#Experimentalist.Core.action.Action">Action</a></li>
@@ -74,17 +96,22 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.volumechange.VolumeChange.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    audio[:, 0] *= self.factor
-    audio[:, 1] *= self.factor
-    return audio</code></pre>
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    print(audio)
+    print(audio.channels)
+    print(audio.frames)
+    if audio.channels == 1:
+        audio.frames[:] *= self.factor
+    else:
+        audio.frames[:, 0] *= self.factor
+        audio.frames[:, 1] *= self.factor</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

@@ -59,23 +59,12 @@ el.replaceWith(d);
 
     def __init__(self, filePath: str, workerName: str) -&gt; None:
         self.log = Log(workerName)
-        self.path = filePath
-        self._read()
-        self.computeLength()
+        self.audio = Audio(filePath)
         self.log.write(f&#34;Data prepared from {filePath}&#34;)
 
     def process(self) -&gt; None:
-        self.normalize()
-        self.computeLength()
-
-    def computeLength(self) -&gt; None:
-        self.length = len(self.audio) / self.sample_rate  # length in seconds
-
-    def normalize(self) -&gt; None:
-        self.audio = Limiter(threshold_db=-5.0).process(
-            self.audio,
-            self.sample_rate
-        )
+        self.audio.normalize()
+        self.audio.update_parameters()
 
     def apply(self, runId: int, outputPath: str, play: bool = False) -&gt; None:
         self._nameOutputFile(outputPath, runId)
@@ -84,11 +73,8 @@ el.replaceWith(d);
         if play is True:
             self._play()
 
-    def _read(self) -&gt; None:
-        self.audio, self.sample_rate = sf.read(self.path)
-
     def _nameOutputFile(self, outputPath: str, runId: int) -&gt; None:
-        name, extension = os.path.splitext(os.path.basename(self.path))
+        name, extension = os.path.splitext(os.path.basename(self.audio.path))
         self.output = os.path.join(outputPath, &#34;&#34;)
         self.output = f&#34;{self.output}{name}-{runId}{extension}&#34;
 
@@ -96,10 +82,10 @@ el.replaceWith(d);
         with sf.SoundFile(
             self.output,
             &#39;w&#39;,
-            samplerate=self.sample_rate,
-            channels=len(self.audio.shape)
+            samplerate=self.audio.sample_rate,
+            channels=self.audio.channels
         ) as f:
-            f.write(self.audio)
+            f.write(self.audio.frames)
 
     def _play(self) -&gt; None:
         from playsound import playsound
@@ -132,35 +118,6 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="Experimentalist.Core.worker.Worker.computeLength"><code class="name flex">
-<span>def <span class="ident">computeLength</span></span>(<span>self) ‑> None</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def computeLength(self) -&gt; None:
-    self.length = len(self.audio) / self.sample_rate  # length in seconds</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="Experimentalist.Core.worker.Worker.normalize"><code class="name flex">
-<span>def <span class="ident">normalize</span></span>(<span>self) ‑> None</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def normalize(self) -&gt; None:
-    self.audio = Limiter(threshold_db=-5.0).process(
-        self.audio,
-        self.sample_rate
-    )</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="Experimentalist.Core.worker.Worker.process"><code class="name flex">
 <span>def <span class="ident">process</span></span>(<span>self) ‑> None</span>
 </code></dt>
@@ -170,8 +127,8 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def process(self) -&gt; None:
-    self.normalize()
-    self.computeLength()</code></pre>
+    self.audio.normalize()
+    self.audio.update_parameters()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -196,8 +153,6 @@ el.replaceWith(d);
 <h4><code><a title="Experimentalist.Core.worker.Worker" href="#Experimentalist.Core.worker.Worker">Worker</a></code></h4>
 <ul class="">
 <li><code><a title="Experimentalist.Core.worker.Worker.apply" href="#Experimentalist.Core.worker.Worker.apply">apply</a></code></li>
-<li><code><a title="Experimentalist.Core.worker.Worker.computeLength" href="#Experimentalist.Core.worker.Worker.computeLength">computeLength</a></code></li>
-<li><code><a title="Experimentalist.Core.worker.Worker.normalize" href="#Experimentalist.Core.worker.Worker.normalize">normalize</a></code></li>
 <li><code><a title="Experimentalist.Core.worker.Worker.process" href="#Experimentalist.Core.worker.Worker.process">process</a></code></li>
 </ul>
 </li>
