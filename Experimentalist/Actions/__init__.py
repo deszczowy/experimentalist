@@ -4,7 +4,6 @@ from Experimentalist.Actions.pan import Pan  # noqa
 from Experimentalist.Actions.stretch import Stretch  # noqa
 from Experimentalist.Actions.dynamicpan import DynamicPan  # noqa
 from Experimentalist.Actions.volumechange import VolumeChange  # noqa
-from Experimentalist.Actions.copy import Copy  # noqa
 from Experimentalist.Actions.revert import Revert  # noqa
 from Experimentalist.Actions.mix import Mix  # noqa
 from Experimentalist.Actions.echo import Echo  # noqa

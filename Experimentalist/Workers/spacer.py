@@ -1,5 +1,5 @@
 from Experimentalist.Core import Worker
-from Experimentalist.Actions import HighPass, LowPass, Copy, DynamicPan, Mix, Reverb, Fade, Loop
+from Experimentalist.Actions import HighPass, LowPass, DynamicPan, Mix, Reverb, Fade, Loop
 
 
 class Spacer(Worker):
@@ -10,8 +10,8 @@ class Spacer(Worker):
     def process(self) -> None:
         self.audio = Reverb(room_size=1.0, dry_wet=1.0).process(self.audio, self.sample_rate)
 
-        copy1 = Copy().process(self.audio, self.sample_rate)
-        copy2 = Copy().process(self.audio, self.sample_rate)
+        copy1 = self.audio.copy()
+        copy2 = self.audio.copy()
 
         copy1 = HighPass().process(copy1, self.sample_rate)
         copy1 = DynamicPan(phase=10.0, starting_left=True).process(copy1, self.sample_rate)
