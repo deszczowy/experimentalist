@@ -1,5 +1,5 @@
 from Experimentalist.Core import Action
-from Experimentalist.Actions import Copy, Mix, VolumeChange
+from Experimentalist.Actions import Mix, VolumeChange
 import numpy as np
 
 
@@ -16,18 +16,18 @@ class Echo(Action):
         self.decay = np.clip(decay_rate, 0.1, 0.99)
         self.clip = clip_to_original_length
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
-        super().process(audio, sample_rate)
+    def process(self, audio: Audio) -> None:
+        super().process(audio)
 
-        copy = Copy().process(audio, sample_rate)
+        copy = audio.copy()
         mixer = Mix(audio, self.interval, self.clip)
         vol = VolumeChange(self.decay)
         iteration = 1
 
         while iteration < 5:
-            copy = vol.process(copy, sample_rate)
-            mixer.process(copy, sample_rate)
+            copy = vol.process(copy)
+            mixer.process(copy)
             iteration += 1
             mixer.setOffset(iteration * self.interval)
 
-        return mixer.result()
+        _ = mixer.result()

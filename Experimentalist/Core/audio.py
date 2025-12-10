@@ -3,6 +3,24 @@ import soundfile as sf
 from pedalboard import Limiter
 
 class Audio:
+    """
+    This class represents audio record and contains all informations related to sound.
+
+    Fields
+    ------
+    frames : numpy.nbarray
+        Contains table of samples. First axis is a progression of time, second contains samples values for channels.
+    sample_rate : int
+        Sound sample rate. Default is 44.1kHz
+    channels : int
+        Contains count of channels in sound (i.e. 2 for stereo). Default is 2.
+    path : str
+        If audio was loaded from file, here will be a path to this file. Default is `None`
+    length : int
+        Represents count of samples in sound. Does not update automaticly after `frames` change, you have to call `update_parameters` for this.
+    duration : float
+        Sound duration in seconds, computed over frames and sample_rate. Does not update automaticly after `frames` change, you have to call `update_parameters` for this.
+    """
 
     def __init__(self, path: str = None) -> None:
         self._initialize()
@@ -27,10 +45,22 @@ class Audio:
         """
         Normalizes signal to -5.0db.
         """
-        self.audio.frames = Limiter(threshold_db=-5.0).process(
-            self.audio.frames,
-            self.audio.sample_rate
+        self.frames = Limiter(threshold_db=-5.0).process(
+            self.frames,
+            self.sample_rate
         )
+
+    def copy(self) -> 'Audio':
+        """
+        Makes a hard copy of self.
+        """
+        new_audio = Audio()
+        new_audio.frames = np.ndarray.copy(self.frames)
+        new_audio.sample_rate = self.sample_rate
+        new_audio.path = self.path
+        new_audio.channels = self.channels
+        new_audio.update_parameters()
+        return new_audio
 
     # Private methods
 
