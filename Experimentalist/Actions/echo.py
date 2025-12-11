@@ -1,4 +1,4 @@
-from Experimentalist.Core import Action
+from Experimentalist.Core import Audio, Action
 from Experimentalist.Actions import Mix, VolumeChange
 import numpy as np
 
