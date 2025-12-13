@@ -1,17 +1,18 @@
-from Experimentalist.Core import Action
+from Experimentalist.Core import Audio, Action
 import numpy as np
 
 
 class Loop(Action):
+    """
+    Looping sound. Sound will be divided in half, then parts will overlap.
+    """
 
     def __init__(self) -> None:
         super().__init__("Loop")
         self.peak = 0.5
 
-    def process(self, audio: np.ndarray, sample_rate: float) -> np.ndarray:
-        super().process(audio, sample_rate)
-        loop_point = int(self.length * self.peak)
-        part1 = audio[:loop_point, :]
-        part2 = audio[-loop_point:, :]
-        audio = 0.5 * part1 + 0.5 * part2
-        return audio
+    def process(self, audio: Audio) -> None:
+        loop_point = int(audio.count * self.peak)
+        part1 = audio.frames[:loop_point, :]
+        part2 = audio.frames[-loop_point:, :]
+        audio.frames = 0.5 * part1 + 0.5 * part2
