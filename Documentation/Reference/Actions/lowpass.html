@@ -56,22 +56,29 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class LowPass(Action):
+    &#34;&#34;&#34;
+    Low pass filter action.
 
+    Parameters
+    ----------
+
+    cutoff_hz: float
+        Filter will pass frequencies below this value. Default is 100Hz.
+
+    &#34;&#34;&#34;
     def __init__(self, cutoff_hz: float = 100) -&gt; None:
         super().__init__(&#34;Low Pass&#34;)
         self.cutoff = cutoff_hz
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        audio = LowpassFilter(
-            cutoff_frequency_hz=self.cutoff).process(audio, sample_rate)
-        super().process(audio, sample_rate)
-        return audio</code></pre>
+    def process(self, audio: Audio) -&gt; None:
+        audio.frames = LowpassFilter(
+            cutoff_frequency_hz=self.cutoff).process(audio.frames, audio.sample_rate)</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
+<div class="desc"><p>Low pass filter action.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
+<dt><strong><code>cutoff_hz</code></strong> :&ensp;<code>float</code></dt>
+<dd>Filter will pass frequencies below this value. Default is 100Hz.</dd>
 </dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -80,18 +87,16 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.lowpass.LowPass.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    audio = LowpassFilter(
-        cutoff_frequency_hz=self.cutoff).process(audio, sample_rate)
-    super().process(audio, sample_rate)
-    return audio</code></pre>
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    audio.frames = LowpassFilter(
+        cutoff_frequency_hz=self.cutoff).process(audio.frames, audio.sample_rate)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.6">
-<title>Experimentalist.Actions.fade API documentation</title>
+<title>Experimentalist.Core.randomm API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -33,7 +33,7 @@ el.replaceWith(d);
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>Experimentalist.Actions.fade</code></h1>
+<h1 class="title">Module <code>Experimentalist.Core.randomm</code></h1>
 </header>
 <section id="section-intro">
 </section>
@@ -46,78 +46,38 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="Experimentalist.Actions.fade.Fade"><code class="flex name class">
-<span>class <span class="ident">Fade</span></span>
-<span>(</span><span>peak_position: float = 0.5)</span>
+<dt id="Experimentalist.Core.randomm.RandomMachine"><code class="flex name class">
+<span>class <span class="ident">RandomMachine</span></span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Fade(Action):
+<pre><code class="python">class RandomMachine:
 
-    def __init__(self, peak_position: float = 0.5) -&gt; None:
-        super().__init__(&#34;Fade&#34;)
-        self.peak = np.clip(peak_position, 0, 1)
+    def __init__(self):
+        now = int(dt.datetime.now(dt.UTC).timestamp())
+        rn.seed(now)
 
-    def process(self, audio: Audio) -&gt; None:
-        peak_point = int(audio.count * self.peak)
-
-        if peak_point == 0:
-            peak_point += 1
-        if peak_point == audio.count:
-            peak_point -= 1
-
-        coef1 = 1 / peak_point  # fade in
-        coef2 = 1 / (audio.count - peak_point)  # fade out
-
-        for i in range(0, peak_point - 1):
-            audio.frames[i, 0] = audio.frames[i, 0] * coef1 * i
-            audio.frames[i, 1] = audio.frames[i, 1] * coef1 * i
-
-        for i in range(peak_point, audio.count):
-            audio.frames[i, 0] = audio.frames[i, 0] * coef2 * (audio.count - i)
-            audio.frames[i, 1] = audio.frames[i, 1] * coef2 * (audio.count - i)</code></pre>
+    def random_frame(self) -&gt; float:
+        sign = -1.0 if rn.random() &lt; 0.5 else 1.0
+        return rn.random() * sign</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
-</dl></div>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="Experimentalist.Core.action.Action" href="../Core/action.html#Experimentalist.Core.action.Action">Action</a></li>
-</ul>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
-<dt id="Experimentalist.Actions.fade.Fade.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
+<dt id="Experimentalist.Core.randomm.RandomMachine.random_frame"><code class="name flex">
+<span>def <span class="ident">random_frame</span></span>(<span>self) ‑> float</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: Audio) -&gt; None:
-    peak_point = int(audio.count * self.peak)
-
-    if peak_point == 0:
-        peak_point += 1
-    if peak_point == audio.count:
-        peak_point -= 1
-
-    coef1 = 1 / peak_point  # fade in
-    coef2 = 1 / (audio.count - peak_point)  # fade out
-
-    for i in range(0, peak_point - 1):
-        audio.frames[i, 0] = audio.frames[i, 0] * coef1 * i
-        audio.frames[i, 1] = audio.frames[i, 1] * coef1 * i
-
-    for i in range(peak_point, audio.count):
-        audio.frames[i, 0] = audio.frames[i, 0] * coef2 * (audio.count - i)
-        audio.frames[i, 1] = audio.frames[i, 1] * coef2 * (audio.count - i)</code></pre>
+<pre><code class="python">def random_frame(self) -&gt; float:
+    sign = -1.0 if rn.random() &lt; 0.5 else 1.0
+    return rn.random() * sign</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -133,15 +93,15 @@ el.replaceWith(d);
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="Experimentalist.Actions" href="index.html">Experimentalist.Actions</a></code></li>
+<li><code><a title="Experimentalist.Core" href="index.html">Experimentalist.Core</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="Experimentalist.Actions.fade.Fade" href="#Experimentalist.Actions.fade.Fade">Fade</a></code></h4>
+<h4><code><a title="Experimentalist.Core.randomm.RandomMachine" href="#Experimentalist.Core.randomm.RandomMachine">RandomMachine</a></code></h4>
 <ul class="">
-<li><code><a title="Experimentalist.Actions.fade.Fade.process" href="#Experimentalist.Actions.fade.Fade.process">process</a></code></li>
+<li><code><a title="Experimentalist.Core.randomm.RandomMachine.random_frame" href="#Experimentalist.Core.randomm.RandomMachine.random_frame">random_frame</a></code></li>
 </ul>
 </li>
 </ul>

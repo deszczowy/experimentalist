@@ -82,8 +82,7 @@ el.replaceWith(d);
             iteration += 1
             mixer.setOffset(iteration * self.interval)
 
-        audio.frames = mixer.result().frames
-        audio.update_parameters()</code></pre>
+        _ = mixer.result()</code></pre>
 </details>
 <div class="desc"><p>Base class for actions invoked on sound.</p>
 <h2 id="parameters">Parameters</h2>
@@ -119,8 +118,7 @@ el.replaceWith(d);
         iteration += 1
         mixer.setOffset(iteration * self.interval)
 
-    audio.frames = mixer.result().frames
-    audio.update_parameters()</code></pre>
+    _ = mixer.result()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

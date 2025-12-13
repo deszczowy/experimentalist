@@ -48,7 +48,7 @@ el.replaceWith(d);
 <dl>
 <dt id="Experimentalist.Actions.mix.Mix"><code class="flex name class">
 <span>class <span class="ident">Mix</span></span>
-<span>(</span><span>base_audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>,<br>offset_seconds: float,<br>clip: bool = False)</span>
+<span>(</span><span>base_audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>,<br>offset: float = 0.0,<br>clip: bool = False)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -56,51 +56,81 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Mix(Action):
+    &#34;&#34;&#34;
+    Mixing. Action is initialized with base sound in which other sound layers can be mixed.
+
+    Parameters
+    ----------
+
+    base_audio : Audio
+        Base sound layer for mixing.
+
+    offset : float
+        Another layer can be mixed starting from every moment of a base sound. Value in seconds. Default is 0.0 which is a base sound beginning.
+
+    clip : bool
+        Indicates if mixed sound sholud be clip to the base sound length. Default is False, so the mixed sound will always be fully heard.
+    &#34;&#34;&#34;
 
     def __init__(
             self,
             base_audio: Audio,
-            offset_seconds: float,
+            offset: float = 0.0,
             clip: bool = False
             ) -&gt; None:
         super().__init__(&#34;Mix&#34;)
         self.base = base_audio
-        self.setOffset(offset_seconds)
+        self.setOffset(offset)
         self.clip = clip
 
     def process(self, audio: Audio) -&gt; None:
-        super().process(audio)
-        offset = int(self.offset * audio.sample_rate)
+        &#34;&#34;&#34;
+        Mixing process. Provided audio will be mixed into base_audio layer.
+        &#34;&#34;&#34;
 
-        length = self.base.count
+        # Offset is provided in seconds, so we need the exact number of frames to be skiped.
+        offset_cnt = int(self.offset * self.base.sample_rate)
 
+        # No clipping means we have to extend base sound if needed
         if self.clip is False:
-            new_length = offset + self.audio.count # in frames
+            new_length = offset_cnt + self.length  # in frames
 
             if new_length &gt; self.base.count:
                 extra = new_length - self.base.count
                 for i in range(0, extra):
                     # silence! to separate action
-                    self.base.resize(new_length)
-                length = new_length
+                    self.base.resize((new_length, 2), refcheck=False)
+                self.base.count = len(self.base)
 
         if self.clip is True:
-            length = min(length, self.base.count - offset)
+            self.length = min(self.length, self.base.count - offset_cnt)
 
-        for i in range(0, length):
-            self.base.frames[i + offset] = self.base.frames[i + offset] + 0.5 * audio.frames[i]
+        for i in range(0, self.length):
+            self.base[i + offset_cnt] = self.base[i + offset_cnt] + 0.5 * audio[i]
 
-    def result(self) -&gt; Audio:
+        return self.base
+
+    def result(self) -&gt; np.ndarray:
         return self.base
 
     def setOffset(self, value: float) -&gt; None:
-        self.offset = value</code></pre>
+        val = 0.0
+        if value &lt; 0.0:
+            val = 0.0
+        if value &gt; self.base.duration:
+            val = self.base.duration
+
+        self.offset = val</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
+<div class="desc"><p>Mixing. Action is initialized with base sound in which other sound layers can be mixed.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
+<dt><strong><code>base_audio</code></strong> :&ensp;<code>Audio</code></dt>
+<dd>Base sound layer for mixing.</dd>
+<dt><strong><code>offset</code></strong> :&ensp;<code>float</code></dt>
+<dd>Another layer can be mixed starting from every moment of a base sound. Value in seconds. Default is 0.0 which is a base sound beginning.</dd>
+<dt><strong><code>clip</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Indicates if mixed sound sholud be clip to the base sound length. Default is False, so the mixed sound will always be fully heard.</dd>
 </dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -117,38 +147,43 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def process(self, audio: Audio) -&gt; None:
-    super().process(audio)
-    offset = int(self.offset * audio.sample_rate)
+    &#34;&#34;&#34;
+    Mixing process. Provided audio will be mixed into base_audio layer.
+    &#34;&#34;&#34;
 
-    length = self.base.count
+    # Offset is provided in seconds, so we need the exact number of frames to be skiped.
+    offset_cnt = int(self.offset * self.base.sample_rate)
 
+    # No clipping means we have to extend base sound if needed
     if self.clip is False:
-        new_length = offset + self.audio.count # in frames
+        new_length = offset_cnt + self.length  # in frames
 
         if new_length &gt; self.base.count:
             extra = new_length - self.base.count
             for i in range(0, extra):
                 # silence! to separate action
-                self.base.resize(new_length)
-            length = new_length
+                self.base.resize((new_length, 2), refcheck=False)
+            self.base.count = len(self.base)
 
     if self.clip is True:
-        length = min(length, self.base.count - offset)
+        self.length = min(self.length, self.base.count - offset_cnt)
 
-    for i in range(0, length):
-        self.base.frames[i + offset] = self.base.frames[i + offset] + 0.5 * audio.frames[i]</code></pre>
+    for i in range(0, self.length):
+        self.base[i + offset_cnt] = self.base[i + offset_cnt] + 0.5 * audio[i]
+
+    return self.base</code></pre>
 </details>
-<div class="desc"></div>
+<div class="desc"><p>Mixing process. Provided audio will be mixed into base_audio layer.</p></div>
 </dd>
 <dt id="Experimentalist.Actions.mix.Mix.result"><code class="name flex">
-<span>def <span class="ident">result</span></span>(<span>self) ‑> <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a></span>
+<span>def <span class="ident">result</span></span>(<span>self) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def result(self) -&gt; Audio:
+<pre><code class="python">def result(self) -&gt; np.ndarray:
     return self.base</code></pre>
 </details>
 <div class="desc"></div>
@@ -162,7 +197,13 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setOffset(self, value: float) -&gt; None:
-    self.offset = value</code></pre>
+    val = 0.0
+    if value &lt; 0.0:
+        val = 0.0
+    if value &gt; self.base.duration:
+        val = self.base.duration
+
+    self.offset = val</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

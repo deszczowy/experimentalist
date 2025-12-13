@@ -56,28 +56,40 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DynamicPan(Action):
+    &#34;&#34;&#34;
+    After this action sound in stereo audio will go from one channel to another and back in given time interval.
+    &#34;&#34;&#34;
 
     def __init__(self, phase: float = 1.0, starting_left: bool = True) -&gt; None:
+        &#34;&#34;&#34;
+        Parameters
+        ----------
+
+        phase : float
+            Interval in which  sound will circulate between channels. In seconds. Default 1.0s.
+        starting_left : bool
+            Indicates if sound starts from left channel. By default it starts from right one.
+        &#34;&#34;&#34;
         super().__init__(&#34;Dynamic Pan&#34;)
         self.phase = np.clip(phase, 0.1, 10.0)
         self.first_left = starting_left
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        super().process(audio, sample_rate)
-        frames = int(self.phase * sample_rate)
+    def process(self, audio: Audio) -&gt; None:
+        frames_count = int(self.phase * audio.sample_rate)
 
-        points = np.linspace(0, 2 * np.pi, frames)
+        points = np.linspace(0, 2 * np.pi, frames_count)
         left = self._one(points)
         right = self._two(points)
 
-        channels = audio.T
+        channels = audio.frames.T
         if self.first_left is True:
             channels[0] = self._apply(channels[0], left)
             channels[1] = self._apply(channels[1], right)
         else:
             channels[0] = self._apply(channels[0], right)
             channels[1] = self._apply(channels[1], left)
-        return channels.T
+
+        audio.frames = channels.T
 
     def _one(self, x: float) -&gt; float:
         return (np.sin(x) + 1) / 2
@@ -99,11 +111,14 @@ el.replaceWith(d);
             i += 1
         return values</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
+<div class="desc"><p>After this action sound in stereo audio will go from one channel to another and back in given time interval.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
+<dt><strong><code>phase</code></strong> :&ensp;<code>float</code></dt>
+<dd>Interval in which
+sound will circulate between channels. In seconds. Default 1.0s.</dd>
+<dt><strong><code>starting_left</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Indicates if sound starts from left channel. By default it starts from right one.</dd>
 </dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -112,29 +127,29 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.dynamicpan.DynamicPan.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    super().process(audio, sample_rate)
-    frames = int(self.phase * sample_rate)
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    frames_count = int(self.phase * audio.sample_rate)
 
-    points = np.linspace(0, 2 * np.pi, frames)
+    points = np.linspace(0, 2 * np.pi, frames_count)
     left = self._one(points)
     right = self._two(points)
 
-    channels = audio.T
+    channels = audio.frames.T
     if self.first_left is True:
         channels[0] = self._apply(channels[0], left)
         channels[1] = self._apply(channels[1], right)
     else:
         channels[0] = self._apply(channels[0], right)
         channels[1] = self._apply(channels[1], left)
-    return channels.T</code></pre>
+
+    audio.frames = channels.T</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

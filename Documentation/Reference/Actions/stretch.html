@@ -56,31 +56,38 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Stretch(Action):
+    &#34;&#34;&#34;
+    Stretching sound.
+
+    Parameters
+    ----------
+
+    factor : float
+        Indicates a direction and level of stretch. Is a number from [0.51, 2.0] range, where 2.0 means doubling up, and 0.51 is doubling down of sound speed. Delfault is 0.7.
+    &#34;&#34;&#34;
 
     def __init__(self, factor: float = 0.7) -&gt; None:
         super().__init__(&#34;Stretch&#34;)
         self.factor = np.clip(factor, 0.51, 2)
         self._computeFactor()
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        super().process(audio, sample_rate)
+    def process(self, audio: Audio) -&gt; None:
 
         # We are using Librosa for this one, and Librosa has different approach
         # to storing audio data
-        signal = audio.T
+        signal = audio.frames.T
         channels = []
 
         for channel in signal:
             resampled = librosa.resample(
                 channel,
-                orig_sr=sample_rate,
-                target_sr=int(sample_rate * self.factor))
+                orig_sr=audio.sample_rate,
+                target_sr=int(audio.sample_rate * self.factor))
             channels.append(resampled)
         new_audio = np.array(channels)
 
         # Back on track
-        audio = new_audio.T
-        return audio
+        audio.frames = new_audio.T
 
     def _computeFactor(self) -&gt; None:
         if self.factor &lt; 1:
@@ -89,11 +96,11 @@ el.replaceWith(d);
             self.factor = ((-0.5 * self.factor) + 1.5)
         self.log.write(f&#34;Multiplier {self.factor}&#34;)</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
+<div class="desc"><p>Stretching sound.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
+<dt><strong><code>factor</code></strong> :&ensp;<code>float</code></dt>
+<dd>Indicates a direction and level of stretch. Is a number from [0.51, 2.0] range, where 2.0 means doubling up, and 0.51 is doubling down of sound speed. Delfault is 0.7.</dd>
 </dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -102,32 +109,30 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.stretch.Stretch.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    super().process(audio, sample_rate)
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
 
     # We are using Librosa for this one, and Librosa has different approach
     # to storing audio data
-    signal = audio.T
+    signal = audio.frames.T
     channels = []
 
     for channel in signal:
         resampled = librosa.resample(
             channel,
-            orig_sr=sample_rate,
-            target_sr=int(sample_rate * self.factor))
+            orig_sr=audio.sample_rate,
+            target_sr=int(audio.sample_rate * self.factor))
         channels.append(resampled)
     new_audio = np.array(channels)
 
     # Back on track
-    audio = new_audio.T
-    return audio</code></pre>
+    audio.frames = new_audio.T</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

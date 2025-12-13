@@ -55,25 +55,21 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Loop(Action):
+    &#34;&#34;&#34;
+    Looping sound. Sound will be divided in half, then parts will overlap.
+    &#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
         super().__init__(&#34;Loop&#34;)
         self.peak = 0.5
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        super().process(audio, sample_rate)
-        loop_point = int(self.length * self.peak)
-        part1 = audio[:loop_point, :]
-        part2 = audio[-loop_point:, :]
-        audio = 0.5 * part1 + 0.5 * part2
-        return audio</code></pre>
+    def process(self, audio: Audio) -&gt; None:
+        loop_point = int(audio.count * self.peak)
+        part1 = audio.frames[:loop_point, :]
+        part2 = audio.frames[-loop_point:, :]
+        audio.frames = 0.5 * part1 + 0.5 * part2</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
-</dl></div>
+<div class="desc"><p>Looping sound. Sound will be divided in half, then parts will overlap.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="Experimentalist.Core.action.Action" href="../Core/action.html#Experimentalist.Core.action.Action">Action</a></li>
@@ -81,20 +77,18 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.loop.Loop.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    super().process(audio, sample_rate)
-    loop_point = int(self.length * self.peak)
-    part1 = audio[:loop_point, :]
-    part2 = audio[-loop_point:, :]
-    audio = 0.5 * part1 + 0.5 * part2
-    return audio</code></pre>
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
+    loop_point = int(audio.count * self.peak)
+    part1 = audio.frames[:loop_point, :]
+    part2 = audio.frames[-loop_point:, :]
+    audio.frames = 0.5 * part1 + 0.5 * part2</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
