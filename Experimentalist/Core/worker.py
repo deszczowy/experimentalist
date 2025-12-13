@@ -37,4 +37,5 @@ class Worker:
 
     def _play(self) -> None:
         from playsound import playsound
+        self.log.write(f"Playing {self.output}")
         playsound(self.output)
