@@ -21,9 +21,6 @@ class VolumeChange(Action):
         self.factor = np.clip(factor, 0.0, 2.0)
 
     def process(self, audio: Audio) -> None:
-        print(audio)
-        print(audio.channels)
-        print(audio.frames)
         if audio.channels == 1:
             audio.frames[:] *= self.factor
         else:
