@@ -66,6 +66,33 @@ class Audio:
         new_audio.update_parameters()
         return new_audio
 
+    def get_excerpt(self, start: float, length: float, hard_cut: bool = False) -> 'Audio':
+        """
+        Taking excerpt from an audio.
+
+        Parameters
+        ----------
+        start : float
+            Point where exceprt starts. In seconds.
+        length : float
+            The length of exceprt. In seconds.
+        hard_cut : bool
+            Indicates if exceprt should be removed from base sound. Default is False, so exceprt will stay in audio.
+        """
+        excerpt = Audio()
+
+        start_frame = np.round(start * self.sample_rate).astype(np.int64)
+        excerpt_length = np.round(length * self.sample_rate).astype(np.int64)
+
+        excerpt.frames = self.frames[start_frame : start_frame + excerpt_length]
+        excerpt.update_parameters()
+
+        if hard_cut is True:
+            self.frames = np.delete(self.frames, np.s_[start_frame : start_frame + excerpt_length], axis=0)
+            self.update_parameters()
+
+        return excerpt
+
     # Private methods
 
     def _initialize(self) -> None:
