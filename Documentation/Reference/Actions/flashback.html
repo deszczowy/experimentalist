@@ -48,7 +48,7 @@ el.replaceWith(d);
 <dl>
 <dt id="Experimentalist.Actions.flashback.Flashback"><code class="flex name class">
 <span>class <span class="ident">Flashback</span></span>
-<span>(</span><span>excerpt_duration: float = 1.0,<br>start: float = 0.0,<br>target: float = 0.0,<br>copy: bool = False,<br>mix: bool = False)</span>
+<span>(</span><span>excerpt_duration: float = 1.0,<br>start: float = 0.0,<br>target: float = 0.0,<br>cut: bool = False,<br>mix: bool = False)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -57,7 +57,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">class Flashback(Action):
 
-    def __init__(self, excerpt_duration: float = 1.0, start: float = 0.0, target: float = 0.0, copy: bool = False, mix: bool = False) -&gt; None:
+    def __init__(self, excerpt_duration: float = 1.0, start: float = 0.0, target: float = 0.0, cut: bool = False, mix: bool = False) -&gt; None:
         &#34;&#34;&#34;
         Creates action for Flashback effect.
 
@@ -69,8 +69,8 @@ el.replaceWith(d);
             Point of time from which excerpt will be taken. In seconds.
         target : float
             Point of time in which excerpt will be placed.
-        copy : bool
-            Determines if excerpt will be copied or cut from its place.
+        cut : bool
+            Determines if excerpt will be cut or copied from its place.
         mix : bool
             Determines if excerpt will be mixed or inserted in target place.
         &#34;&#34;&#34;
@@ -78,40 +78,21 @@ el.replaceWith(d);
         self.ed = np.clip(excerpt_duration, 0.2, 4.0)
         self.start = start
         self.target = target
-        self.do_copy = copy
+        self.do_cut = cut
         self.do_mix = mix
 
-    def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-        audio = super().process(audio, sample_rate)
-        (excerpt, audio) = self._obtain_excerpt(audio, sample_rate)
+    def process(self, audio: Audio) -&gt; None:
 
-        self.log.write(&#34;File sample rate = {0}Hz&#34;.format(sample_rate))
-        self.log.write(&#34;File frames count = {0}&#34;.format(self.length))
+        excerpt = audio.get_excerpt(self.start, self.ed, self.do_cut)
 
         if self.do_mix:
             self.log.write(&#34;Mix&#34;)
             mixer = Mix(audio, self.target)
-            audio = mixer.process(excerpt, sample_rate)
+            audio = mixer.process(excerpt)
         else:
             self.log.write(&#34;Insert&#34;)
-            target = np.round(self.target * sample_rate).astype(np.int64)
-            audio = np.concatenate((audio[:target], excerpt, audio[target:]))
-
-        return audio
-
-    def _obtain_excerpt(self, audio: np.ndarray, sample_rate: float) -&gt; (np.ndarray, np.ndarray):
-        start = np.round(self.start * sample_rate).astype(np.int64)
-        length = np.round(self.ed * sample_rate).astype(np.int64)
-
-        self.log.write(&#34;Excerpt start index = {0}&#34;.format(start))
-        self.log.write(&#34;Excerpt frames count = {0}&#34;.format(length))
-
-        excerpt = audio[start : start + length]
-
-        if self.do_copy is not True:
-            audio = np.delete(audio, np.s_[start : start + length], axis=0)
-
-        return (excerpt, audio)</code></pre>
+            target = np.round(self.target * audio.sample_rate).astype(np.int64)
+            audio.frames = np.concatenate((audio.frames[:target], excerpt.frames, audio.frames[target:]))</code></pre>
 </details>
 <div class="desc"><p>Base class for actions invoked on sound.</p>
 <h2 id="parameters">Parameters</h2>
@@ -128,8 +109,8 @@ el.replaceWith(d);
 <dd>Point of time from which excerpt will be taken. In seconds.</dd>
 <dt><strong><code>target</code></strong> :&ensp;<code>float</code></dt>
 <dd>Point of time in which excerpt will be placed.</dd>
-<dt><strong><code>copy</code></strong> :&ensp;<code>bool</code></dt>
-<dd>Determines if excerpt will be copied or cut from its place.</dd>
+<dt><strong><code>cut</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Determines if excerpt will be cut or copied from its place.</dd>
 <dt><strong><code>mix</code></strong> :&ensp;<code>bool</code></dt>
 <dd>Determines if excerpt will be mixed or inserted in target place.</dd>
 </dl></div>
@@ -140,30 +121,25 @@ el.replaceWith(d);
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Actions.flashback.Flashback.process"><code class="name flex">
-<span>def <span class="ident">process</span></span>(<span>self, audio: numpy.ndarray, sample_rate: float) ‑> numpy.ndarray</span>
+<span>def <span class="ident">process</span></span>(<span>self,<br>audio: <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a>) ‑> None</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def process(self, audio: np.ndarray, sample_rate: float) -&gt; np.ndarray:
-    audio = super().process(audio, sample_rate)
-    (excerpt, audio) = self._obtain_excerpt(audio, sample_rate)
+<pre><code class="python">def process(self, audio: Audio) -&gt; None:
 
-    self.log.write(&#34;File sample rate = {0}Hz&#34;.format(sample_rate))
-    self.log.write(&#34;File frames count = {0}&#34;.format(self.length))
+    excerpt = audio.get_excerpt(self.start, self.ed, self.do_cut)
 
     if self.do_mix:
         self.log.write(&#34;Mix&#34;)
         mixer = Mix(audio, self.target)
-        audio = mixer.process(excerpt, sample_rate)
+        audio = mixer.process(excerpt)
     else:
         self.log.write(&#34;Insert&#34;)
-        target = np.round(self.target * sample_rate).astype(np.int64)
-        audio = np.concatenate((audio[:target], excerpt, audio[target:]))
-
-    return audio</code></pre>
+        target = np.round(self.target * audio.sample_rate).astype(np.int64)
+        audio.frames = np.concatenate((audio.frames[:target], excerpt.frames, audio.frames[target:]))</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

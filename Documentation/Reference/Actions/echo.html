@@ -56,6 +56,18 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Echo(Action):
+    &#34;&#34;&#34;
+    Adding echo to audio.
+
+    Parameters
+    ----------
+    repeat_interval : float
+        Echo will repeat itself in this interval. Value in seconds, from a [0.1, 5.0] range. Default is 1.0 second.
+    decay_rate : float
+        This indicates how fast the echo will dissolve. Value from [0.1, 0.99] range. Lower the value the echo will stay longer. Default is 0.6.
+    clip_to_original_length : bool
+        If true, the sound will lengthen until the echo naturally fades away. Default is False, so sound will be cut.
+    &#34;&#34;&#34;
 
     def __init__(
             self,
@@ -69,26 +81,28 @@ el.replaceWith(d);
         self.clip = clip_to_original_length
 
     def process(self, audio: Audio) -&gt; None:
-        super().process(audio)
-
+        print(audio)
         copy = audio.copy()
+        print(copy)
         mixer = Mix(audio, self.interval, self.clip)
         vol = VolumeChange(self.decay)
         iteration = 1
 
         while iteration &lt; 5:
-            copy = vol.process(copy)
+            vol.process(copy)
             mixer.process(copy)
             iteration += 1
-            mixer.setOffset(iteration * self.interval)
-
-        _ = mixer.result()</code></pre>
+            mixer.setOffset(iteration * self.interval)</code></pre>
 </details>
-<div class="desc"><p>Base class for actions invoked on sound.</p>
+<div class="desc"><p>Adding echo to audio.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>withName</code></strong> :&ensp;<code>str</code></dt>
-<dd>This is an action name, which will appear in log file and prints.</dd>
+<dt><strong><code>repeat_interval</code></strong> :&ensp;<code>float</code></dt>
+<dd>Echo will repeat itself in this interval. Value in seconds, from a [0.1, 5.0] range. Default is 1.0 second.</dd>
+<dt><strong><code>decay_rate</code></strong> :&ensp;<code>float</code></dt>
+<dd>This indicates how fast the echo will dissolve. Value from [0.1, 0.99] range. Lower the value the echo will stay longer. Default is 0.6.</dd>
+<dt><strong><code>clip_to_original_length</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If true, the sound will lengthen until the echo naturally fades away. Default is False, so sound will be cut.</dd>
 </dl></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -105,20 +119,18 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def process(self, audio: Audio) -&gt; None:
-    super().process(audio)
-
+    print(audio)
     copy = audio.copy()
+    print(copy)
     mixer = Mix(audio, self.interval, self.clip)
     vol = VolumeChange(self.decay)
     iteration = 1
 
     while iteration &lt; 5:
-        copy = vol.process(copy)
+        vol.process(copy)
         mixer.process(copy)
         iteration += 1
-        mixer.setOffset(iteration * self.interval)
-
-    _ = mixer.result()</code></pre>
+        mixer.setOffset(iteration * self.interval)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

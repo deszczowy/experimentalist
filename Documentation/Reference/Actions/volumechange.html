@@ -74,9 +74,6 @@ el.replaceWith(d);
         self.factor = np.clip(factor, 0.0, 2.0)
 
     def process(self, audio: Audio) -&gt; None:
-        print(audio)
-        print(audio.channels)
-        print(audio.frames)
         if audio.channels == 1:
             audio.frames[:] *= self.factor
         else:
@@ -104,9 +101,6 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def process(self, audio: Audio) -&gt; None:
-    print(audio)
-    print(audio.channels)
-    print(audio.frames)
     if audio.channels == 1:
         audio.frames[:] *= self.factor
     else:

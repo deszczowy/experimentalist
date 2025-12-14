@@ -93,28 +93,29 @@ el.replaceWith(d);
 
         # No clipping means we have to extend base sound if needed
         if self.clip is False:
-            new_length = offset_cnt + self.length  # in frames
+
+            # Computing the last frame of mixed sound
+            new_length = offset_cnt + audio.count  # in frames
 
             if new_length &gt; self.base.count:
-                extra = new_length - self.base.count
-                for i in range(0, extra):
-                    # silence! to separate action
-                    self.base.resize((new_length, 2), refcheck=False)
-                self.base.count = len(self.base)
+                # If mixed sound ends after the base level resize base level
+                self.base.resize(new_length)
 
+        # Clipping means that mixed sound should be shortend if needed
         if self.clip is True:
-            self.length = min(self.length, self.base.count - offset_cnt)
+            new_length = min(audio.count, self.base.count - offset_cnt)
+            if new_length &lt; audio.count:
+                audio.resize(new_length)
 
-        for i in range(0, self.length):
-            self.base[i + offset_cnt] = self.base[i + offset_cnt] + 0.5 * audio[i]
+        # Actual mixing
+        for i in range(0, audio.count):
+            self.base.frames[i + offset_cnt] = self.base.frames[i + offset_cnt] + 0.5 * audio.frames[i] # todo : coeficient? low volume? check
 
-        return self.base
-
-    def result(self) -&gt; np.ndarray:
+    def result(self) -&gt; Audio:
         return self.base
 
     def setOffset(self, value: float) -&gt; None:
-        val = 0.0
+        val = value
         if value &lt; 0.0:
             val = 0.0
         if value &gt; self.base.duration:
@@ -156,34 +157,35 @@ el.replaceWith(d);
 
     # No clipping means we have to extend base sound if needed
     if self.clip is False:
-        new_length = offset_cnt + self.length  # in frames
+
+        # Computing the last frame of mixed sound
+        new_length = offset_cnt + audio.count  # in frames
 
         if new_length &gt; self.base.count:
-            extra = new_length - self.base.count
-            for i in range(0, extra):
-                # silence! to separate action
-                self.base.resize((new_length, 2), refcheck=False)
-            self.base.count = len(self.base)
+            # If mixed sound ends after the base level resize base level
+            self.base.resize(new_length)
 
+    # Clipping means that mixed sound should be shortend if needed
     if self.clip is True:
-        self.length = min(self.length, self.base.count - offset_cnt)
+        new_length = min(audio.count, self.base.count - offset_cnt)
+        if new_length &lt; audio.count:
+            audio.resize(new_length)
 
-    for i in range(0, self.length):
-        self.base[i + offset_cnt] = self.base[i + offset_cnt] + 0.5 * audio[i]
-
-    return self.base</code></pre>
+    # Actual mixing
+    for i in range(0, audio.count):
+        self.base.frames[i + offset_cnt] = self.base.frames[i + offset_cnt] + 0.5 * audio.frames[i] # todo : coeficient? low volume? check</code></pre>
 </details>
 <div class="desc"><p>Mixing process. Provided audio will be mixed into base_audio layer.</p></div>
 </dd>
 <dt id="Experimentalist.Actions.mix.Mix.result"><code class="name flex">
-<span>def <span class="ident">result</span></span>(<span>self) ‑> numpy.ndarray</span>
+<span>def <span class="ident">result</span></span>(<span>self) ‑> <a title="Experimentalist.Core.audio.Audio" href="../Core/audio.html#Experimentalist.Core.audio.Audio">Audio</a></span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def result(self) -&gt; np.ndarray:
+<pre><code class="python">def result(self) -&gt; Audio:
     return self.base</code></pre>
 </details>
 <div class="desc"></div>
@@ -197,7 +199,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setOffset(self, value: float) -&gt; None:
-    val = 0.0
+    val = value
     if value &lt; 0.0:
         val = 0.0
     if value &gt; self.base.duration:

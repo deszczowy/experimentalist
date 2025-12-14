@@ -59,8 +59,8 @@ el.replaceWith(d);
     &#34;&#34;&#34;
     This class represents audio record and contains all informations related to sound.
 
-    Fields
-    ------
+    Attributes
+    ----------
     frames : numpy.nbarray
         Contains table of samples. First axis is a progression of time, second contains samples values for channels.
     sample_rate : int
@@ -119,6 +119,33 @@ el.replaceWith(d);
         new_audio.update_parameters()
         return new_audio
 
+    def get_excerpt(self, start: float, length: float, hard_cut: bool = False) -&gt; &#39;Audio&#39;:
+        &#34;&#34;&#34;
+        Taking excerpt from an audio.
+
+        Parameters
+        ----------
+        start : float
+            Point where exceprt starts. In seconds.
+        length : float
+            The length of exceprt. In seconds.
+        hard_cut : bool
+            Indicates if exceprt should be removed from base sound. Default is False, so exceprt will stay in audio.
+        &#34;&#34;&#34;
+        excerpt = Audio()
+
+        start_frame = np.round(start * self.sample_rate).astype(np.int64)
+        excerpt_length = np.round(length * self.sample_rate).astype(np.int64)
+
+        excerpt.frames = self.frames[start_frame : start_frame + excerpt_length]
+        excerpt.update_parameters()
+
+        if hard_cut is True:
+            self.frames = np.delete(self.frames, np.s_[start_frame : start_frame + excerpt_length], axis=0)
+            self.update_parameters()
+
+        return excerpt
+
     # Private methods
 
     def _initialize(self) -&gt; None:
@@ -142,19 +169,21 @@ el.replaceWith(d);
         self.count = len(self.frames)</code></pre>
 </details>
 <div class="desc"><p>This class represents audio record and contains all informations related to sound.</p>
-<h2 id="fields">Fields</h2>
-<p>frames : numpy.nbarray
-Contains table of samples. First axis is a progression of time, second contains samples values for channels.
-sample_rate : int
-Sound sample rate. Default is 44.1kHz
-channels : int
-Contains count of channels in sound (i.e. 2 for stereo). Default is 2.
-path : str
-If audio was loaded from file, here will be a path to this file. Default is <code>None</code>
-length : int
-Represents count of samples in sound. Does not update automaticly after <code>frames</code> change, you have to call <code>update_parameters</code> for this.
-duration : float
-Sound duration in seconds, computed over frames and sample_rate. Does not update automaticly after <code>frames</code> change, you have to call <code>update_parameters</code> for this.</p></div>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>frames</code></strong> :&ensp;<code>numpy.nbarray</code></dt>
+<dd>Contains table of samples. First axis is a progression of time, second contains samples values for channels.</dd>
+<dt><strong><code>sample_rate</code></strong> :&ensp;<code>int</code></dt>
+<dd>Sound sample rate. Default is 44.1kHz</dd>
+<dt><strong><code>channels</code></strong> :&ensp;<code>int</code></dt>
+<dd>Contains count of channels in sound (i.e. 2 for stereo). Default is 2.</dd>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>If audio was loaded from file, here will be a path to this file. Default is <code>None</code></dd>
+<dt><strong><code>length</code></strong> :&ensp;<code>int</code></dt>
+<dd>Represents count of samples in sound. Does not update automaticly after <code>frames</code> change, you have to call <code>update_parameters</code> for this.</dd>
+<dt><strong><code>duration</code></strong> :&ensp;<code>float</code></dt>
+<dd>Sound duration in seconds, computed over frames and sample_rate. Does not update automaticly after <code>frames</code> change, you have to call <code>update_parameters</code> for this.</dd>
+</dl></div>
 <h3>Methods</h3>
 <dl>
 <dt id="Experimentalist.Core.audio.Audio.copy"><code class="name flex">
@@ -178,6 +207,52 @@ Sound duration in seconds, computed over frames and sample_rate. Does not update
     return new_audio</code></pre>
 </details>
 <div class="desc"><p>Makes a hard copy of self.</p></div>
+</dd>
+<dt id="Experimentalist.Core.audio.Audio.get_excerpt"><code class="name flex">
+<span>def <span class="ident">get_excerpt</span></span>(<span>self, start: float, length: float, hard_cut: bool = False) ‑> <a title="Experimentalist.Core.audio.Audio" href="#Experimentalist.Core.audio.Audio">Audio</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_excerpt(self, start: float, length: float, hard_cut: bool = False) -&gt; &#39;Audio&#39;:
+    &#34;&#34;&#34;
+    Taking excerpt from an audio.
+
+    Parameters
+    ----------
+    start : float
+        Point where exceprt starts. In seconds.
+    length : float
+        The length of exceprt. In seconds.
+    hard_cut : bool
+        Indicates if exceprt should be removed from base sound. Default is False, so exceprt will stay in audio.
+    &#34;&#34;&#34;
+    excerpt = Audio()
+
+    start_frame = np.round(start * self.sample_rate).astype(np.int64)
+    excerpt_length = np.round(length * self.sample_rate).astype(np.int64)
+
+    excerpt.frames = self.frames[start_frame : start_frame + excerpt_length]
+    excerpt.update_parameters()
+
+    if hard_cut is True:
+        self.frames = np.delete(self.frames, np.s_[start_frame : start_frame + excerpt_length], axis=0)
+        self.update_parameters()
+
+    return excerpt</code></pre>
+</details>
+<div class="desc"><p>Taking excerpt from an audio.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>start</code></strong> :&ensp;<code>float</code></dt>
+<dd>Point where exceprt starts. In seconds.</dd>
+<dt><strong><code>length</code></strong> :&ensp;<code>float</code></dt>
+<dd>The length of exceprt. In seconds.</dd>
+<dt><strong><code>hard_cut</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Indicates if exceprt should be removed from base sound. Default is False, so exceprt will stay in audio.</dd>
+</dl></div>
 </dd>
 <dt id="Experimentalist.Core.audio.Audio.load"><code class="name flex">
 <span>def <span class="ident">load</span></span>(<span>self, path: str) ‑> None</span>
@@ -265,8 +340,9 @@ Sound duration in seconds, computed over frames and sample_rate. Does not update
 <ul>
 <li>
 <h4><code><a title="Experimentalist.Core.audio.Audio" href="#Experimentalist.Core.audio.Audio">Audio</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="Experimentalist.Core.audio.Audio.copy" href="#Experimentalist.Core.audio.Audio.copy">copy</a></code></li>
+<li><code><a title="Experimentalist.Core.audio.Audio.get_excerpt" href="#Experimentalist.Core.audio.Audio.get_excerpt">get_excerpt</a></code></li>
 <li><code><a title="Experimentalist.Core.audio.Audio.load" href="#Experimentalist.Core.audio.Audio.load">load</a></code></li>
 <li><code><a title="Experimentalist.Core.audio.Audio.normalize" href="#Experimentalist.Core.audio.Audio.normalize">normalize</a></code></li>
 <li><code><a title="Experimentalist.Core.audio.Audio.resize" href="#Experimentalist.Core.audio.Audio.resize">resize</a></code></li>

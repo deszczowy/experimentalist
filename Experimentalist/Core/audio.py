@@ -6,8 +6,8 @@ class Audio:
     """
     This class represents audio record and contains all informations related to sound.
 
-    Fields
-    ------
+    Attributes
+    ----------
     frames : numpy.nbarray
         Contains table of samples. First axis is a progression of time, second contains samples values for channels.
     sample_rate : int
